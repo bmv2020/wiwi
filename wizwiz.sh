@@ -36,31 +36,7 @@ apt install php php-cli php-mysql libapache2-mod-php php-gd php-xml php-curl php
 
 echo -e "\n\e[92mPackages Installed Continuing ...\033[0m\n"
 
-echo 'phpmyadmin phpmyadmin/dbconfig-install boolean true' | debconf-set-selections
-echo 'phpmyadmin phpmyadmin/app-password-confirm password wizwizhipass' | debconf-set-selections
-echo 'phpmyadmin phpmyadmin/mysql/admin-pass password wizwizhipass' | debconf-set-selections
-echo 'phpmyadmin phpmyadmin/mysql/app-pass password wizwizhipass' | debconf-set-selections
-echo 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2' | debconf-set-selections
-sudo apt-get install phpmyadmin -y
-sudo ln -s /etc/phpmyadmin/apache.conf /etc/apache2/conf-available/phpmyadmin.conf
-sudo a2enconf phpmyadmin.conf
-sudo systemctl restart apache2
 
-wait
-
-sudo apt-get install -y php-soap
-sudo apt-get install libapache2-mod-php
-
-# extension=soap.so
-# echo "extension=soap.so" >> /usr/local/lib/php.ini
-# sed -i 's/;extension=soap/extension=soap/g' /usr/local/lib/php.ini
-
-
-# services
-sudo systemctl enable mysql.service
-sudo systemctl start mysql.service
-sudo systemctl enable apache2
-sudo systemctl start apache2
 
 echo -e "\n\e[92m Setting Up UFW...\033[0m\n"
 
@@ -76,14 +52,10 @@ sudo apt-get install -y git
 sudo apt-get install -y wget
 sudo apt-get install -y unzip
 sudo apt install curl -y
-sudo apt-get install -y php-ssh2
-sudo apt-get install -y libssh2-1-dev libssh2-1
-
-sudo systemctl restart apache2.service
 
 wait
 
-git clone https://github.com/wizwizdev/wizwizxui-timebot.git /var/www/html/wizwizxui-timebot
+git clone https://github.com/bmv2020/wiwi.git /var/www/html/wizwizxui-timebot
 sudo chown -R www-data:www-data /var/www/html/wizwizxui-timebot/
 sudo chmod -R 755 /var/www/html/wizwizxui-timebot/
 echo -e "\n\033[33mWizWiz config and script have been installed successfully\033[0m"
@@ -105,7 +77,7 @@ fi
  destination_dir=$(find /var/www/html -type d -name "*wizpanel*" | head -n 1)
 
  cd /var/www/html/
- wget -O wizwizpanel.zip https://github.com/wizwizdev/wizwizxui-timebot/releases/download/7.5.3/wizwizpanel.zip
+ wget -O wizwizpanel.zip https://github.com/bmv2020/wiwi/releases/download/7.5.3/wizwizpanel.zip
 
  file_to_transfer="/var/www/html/wizwizpanel.zip"
  destination_dir=$(find /var/www/html -type d -name "*wizpanel*" | head -n 1)
@@ -193,33 +165,6 @@ echo -e "\n\033[1;7;31mAllowing HTTP and HTTPS traffic...\033[0m\n"
 sudo ufw allow 80
 sudo ufw allow 443
 
-# Let's Encrypt
-echo -e "\n\033[1;7;32mInstalling Let's Encrypt...\033[0m\n"
-sudo apt install letsencrypt -y
-
-# automatic certificate renewal
-echo -e "\n\033[1;7;33mEnabling automatic certificate renewal...\033[0m\n"
-sudo systemctl enable certbot.timer
-
-# SSL certificate using standalone mode
-echo -e "\n\033[1;7;34mObtaining SSL certificate using standalone mode...\033[0m\n"
-sudo certbot certonly --standalone --agree-tos --preferred-challenges http -d $DOMAIN_NAME
-
-# Certbot Apache plugin
-echo -e "\n\033[1;7;35mInstalling Certbot Apache plugin...\033[0m\n"
-sudo apt install python3-certbot-apache -y
-
-# SSL certificate using Apache plugin
-echo -e "\n\033[1;7;36mObtaining SSL certificate using Apache plugin...\033[0m\n"
-sudo certbot --apache --agree-tos --preferred-challenges http -d $DOMAIN_NAME
-
-# echo -e "\n\033[1;7;33mObtaining SSL certificate using manual DNS mode (wildcard)...\033[0m\n"
-# sudo certbot certonly --manual --agree-tos --preferred-challenges dns -d $DOMAIN_NAME -d $WILDCARD_DOMAIN
-
-
-echo -e "\e[32m======================================"
-echo -e "SSL certificate obtained successfully!"
-echo -e "======================================\033[0m"
 
 
 wait
