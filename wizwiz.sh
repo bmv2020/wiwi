@@ -20,38 +20,19 @@ echo -e "    \e[31mTelegram Channel: \e[34m@wizwizch\033[0m | \e[31mTelegram Gro
 
 #sleep
 echo -e "\e[32mInstalling WizWiz script ... \033[0m\n"
-sleep 5
+sleep 2
 
-sudo apt update && apt upgrade -y
-echo -e "\e[92mThe server was successfully updated ...\033[0m\n"
+# installing Packages
+apt install apache2 apache2-utils -y
+systemctl enable apache2
+systemctl start apache2
+systemctl status apache2
 
+apt-get install mariadb-server -y
+systemctl enable mariadb
+systemctl start mariadb
 
-PKG=(
-    lamp-server^
-    libapache2-mod-php 
-    mysql-server 
-    apache2 
-    php-mbstring 
-    php-zip 
-    php-gd 
-    php-json 
-    php-curl 
-#     phpmyadmin
-)
-
-for i in "${PKG[@]}"
-do
-    dpkg -s $i &> /dev/null
-    if [ $? -eq 0 ]; then
-        echo "$i is already installed"
-    else
-        apt install $i -y
-        if [ $? -ne 0 ]; then
-            echo "Error installing $i"
-            exit 1
-        fi
-    fi
-done
+apt install php php-cli php-mysql libapache2-mod-php php-gd php-xml php-curl php-common -y
 
 echo -e "\n\e[92mPackages Installed Continuing ...\033[0m\n"
 
